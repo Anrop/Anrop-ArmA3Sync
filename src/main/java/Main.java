@@ -2,6 +2,8 @@ import static spark.Spark.*;
 
 import com.google.gson.Gson;
 import fr.soe.a3s.controller.ObserverText;
+import fr.soe.a3s.domain.repository.Events;
+import fr.soe.a3s.dto.RepositoryDTO;
 import fr.soe.a3s.exception.LoadingException;
 import fr.soe.a3s.exception.repository.RepositoryException;
 import fr.soe.a3s.service.RepositoryService;
@@ -15,6 +17,7 @@ public class Main {
         repositoryService = new RepositoryService();
         try {
             repositoryService.readAll();
+            restoreEvents();
         } catch (LoadingException e) {
             e.printStackTrace();
 
@@ -35,6 +38,17 @@ public class Main {
         get("/repositories/:name", (req, res) -> repositoryService.getRepository(req.params("name")), gson::toJson);
         post("/repositories/:name/build", (req, res) -> buildRepository(req.params("name")), gson::toJson);
         get("/repositories/:name/events", (req, res) -> repositoryService.getEvents(req.params("name")), gson::toJson);
+    }
+
+    private static void restoreEvents() {
+        for (RepositoryDTO repository : repositoryService.getRepositories()) {
+            try {
+                Events events = RepositoryService.getRepositoryDAO().readEvents(repository.getName());
+                RepositoryService.getRepositoryDAO().getMap().get(repository.getName()).setEvents(events);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static Object buildRepository(String name) {

@@ -33,3 +33,6 @@ proguard/
 .gradle/
 build/
 bin/
+
+# ArmA3Sync Settings
+resources/

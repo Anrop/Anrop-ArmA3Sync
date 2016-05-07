@@ -20,6 +20,7 @@ public class Main {
 
         get("/repositories", (req, res) -> repositoryService.getRepositories(), gson::toJson);
         get("/repositories/:name", (req, res) -> repositoryService.getRepository(req.params("name")), gson::toJson);
+        get("/repositories/:name/events", (req, res) -> repositoryService.getEvents(req.params("name")), gson::toJson);
     }
 }
 

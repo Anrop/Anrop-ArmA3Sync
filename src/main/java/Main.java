@@ -34,6 +34,10 @@ public class Main {
 
         Gson gson = new Gson();
 
+        after((request, response) -> {
+            response.header("Content-Encoding", "gzip");
+        });
+
         get("/repositories", (req, res) -> repositoryService.getRepositories(), gson::toJson);
         get("/repositories/:name", (req, res) -> repositoryService.getRepository(req.params("name")), gson::toJson);
         post("/repositories/:name/build", (req, res) -> buildRepository(req.params("name")), gson::toJson);
